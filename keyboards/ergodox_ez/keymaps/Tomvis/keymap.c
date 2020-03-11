@@ -11,6 +11,7 @@
 #include "keymap_german_ch.h"
 #include "keymap_jp.h"
 #include "keymap_bepo.h"
+#include <print.h>
 
 #define KC_MAC_UNDO LGUI(KC_Z)
 #define KC_MAC_CUT LGUI(KC_X)
@@ -30,13 +31,29 @@ enum custom_keycodes {
   RGB_SLD = EZ_SAFE_RANGE,
   HSV_86_255_128,
   HSV_27_255_255,
-  TD_SHIFT_CAPSLOCK = 0
+  PRN,
+  BRACKET,
+  CBR,
+  SELECT_ALL_COPY,
+  TD_SHIFT_CAPSLOCK = 0,
+  TD_ESCAPE_QUIT,
 };
+
+
+void dance_escape_quit (qk_tap_dance_state_t *state, void *user_data) {
+  if (state->count >= 2) {
+    SEND_STRING ("Safety dance!");
+    reset_tap_dance (state);
+  }
+}
 
 
 qk_tap_dance_action_t tap_dance_actions[] = {
-	[TD_SHIFT_CAPSLOCK] = ACTION_TAP_DANCE_DOUBLE(KC_LSHIFT, KC_CAPSLOCK)
+	[TD_SHIFT_CAPSLOCK] = ACTION_TAP_DANCE_DOUBLE(KC_LSHIFT, KC_CAPSLOCK),
+  [TD_ESCAPE_QUIT] = ACTION_TAP_DANCE_FN(dance_escape_quit)
 };
+
+
 
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
@@ -61,15 +78,17 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
                                                                                     RGB_VAD,        RGB_VAI,        HSV_27_255_255, KC_TRANSPARENT, TOGGLE_LAYER_COLOR,RGB_HUI
   ),
   [2] = LAYOUT_ergodox_pretty(
-    KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT,                                 KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT,
+    RESET, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT,                                 KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT,
     KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_MS_UP,       KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT,                                 KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_AUDIO_VOL_DOWN,KC_AUDIO_VOL_UP,KC_TRANSPARENT, KC_TRANSPARENT,
     KC_TRANSPARENT, KC_TRANSPARENT, KC_MS_LEFT,     KC_MS_DOWN,     KC_MS_RIGHT,    KC_TRANSPARENT,                                                                 KC_TRANSPARENT, KC_MEDIA_PREV_TRACK,KC_MEDIA_PLAY_PAUSE,KC_MEDIA_NEXT_TRACK,KC_TRANSPARENT, KC_TRANSPARENT,
     KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_MS_BTN1,     KC_MS_BTN2,     KC_TRANSPARENT, KC_TRANSPARENT,                                 KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT,
     KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT,                                                                                                 KC_TRANSPARENT, KC_TRANSPARENT, KC_AUDIO_MUTE,  KC_TRANSPARENT, KC_TRANSPARENT,
                                                                                                     KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT,
                                                                                                                     KC_TRANSPARENT, KC_TRANSPARENT,
-                                                                                    KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_WWW_BACK
+                                                                                    KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, TD(TD_ESCAPE_QUIT)
+
   ),
+
 };
 
 
@@ -78,7 +97,12 @@ bool disable_layer_color = 0;
 
 bool suspended = false;
 
+
+
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
+  // #ifdef CONSOLE_ENABLE
+  //   uprintf("KL: kc: %u, col: %u, row: %u, pressed: %u\n", keycode, record->event.key.col, record->event.key.row, record->event.pressed);
+  //   #endif 
   switch (keycode) {
     case RGB_SLD:
       if (record->event.pressed) {
@@ -108,10 +132,30 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
         #endif
       }
       return false;
-  }
-  return true;
+    case PRN:
+      if (record->event.pressed) {
+        SEND_STRING("()"SS_TAP(X_LEFT));
+      }
+      break;
+    case BRACKET:
+      if (record->event.pressed) {
+        SEND_STRING("[]"SS_TAP(X_LEFT));
+      }
+      break;
+    case CBR:
+      if (record->event.pressed) {
+        SEND_STRING("{}"SS_TAP(X_LEFT));
+      }    
+      break;
+       case SELECT_ALL_COPY:
+      if (record->event.pressed) {
+        SEND_STRING(SS_LCTRL("ac"));
+      }    
+      break;
 }
-
+  
+  return true;
+   }
 uint32_t layer_state_set_user(uint32_t state) {
 
     uint8_t layer = biton32(state);
@@ -185,4 +229,9 @@ uint32_t layer_state_set_user(uint32_t state) {
 
 void keyboard_post_init_user(void) {
   layer_state_set_user(layer_state);
+    // Customise these values to desired behaviour
+  // debug_enable=true;
+  // debug_matrix=true;
+  //debug_keyboard=true;
+  //debug_mouse=true;
 }
