@@ -11,7 +11,7 @@
 #include "keymap_german_ch.h"
 #include "keymap_jp.h"
 #include "keymap_bepo.h"
-#include <print.h>
+// #include <print.h>
 
 #define KC_MAC_UNDO LGUI(KC_Z)
 #define KC_MAC_CUT LGUI(KC_X)
@@ -41,8 +41,12 @@ enum custom_keycodes {
 
 
 void dance_escape_quit (qk_tap_dance_state_t *state, void *user_data) {
-  if (state->count >= 2) {
-    SEND_STRING ("Safety dance!");
+  if (state->count == 1) {
+    SEND_STRING(SS_TAP(X_ESCAPE));
+    reset_tap_dance (state);
+  }
+  else if (state->count == 2) {
+    SEND_STRING(SS_RALT(SS_TAP(X_F4)));
     reset_tap_dance (state);
   }
 }
@@ -63,7 +67,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     KC_DELETE,      KC_A,           KC_S,           KC_D,           KC_F,           KC_G,                                                                           KC_H,           KC_J,           KC_K,           KC_L,           KC_SCOLON,      LGUI_T(KC_QUOTE),
     TD(TD_SHIFT_CAPSLOCK),LCTL_T(KC_Z),   KC_X,           KC_C,           KC_V,           KC_B,           DYN_MACRO_PLAY1,                                KC_MEH,         KC_N,           KC_M,           KC_COMMA,       KC_DOT,         RCTL_T(KC_SLASH),KC_RSHIFT,
     LT(1,KC_GRAVE), KC_LALT,        LALT(KC_LSHIFT),KC_LEFT,        KC_RIGHT,                                                                                                       KC_UP,          KC_DOWN,        KC_LBRACKET,    KC_RBRACKET,    MO(1),
-                                                                                                    LALT_T(KC_APPLICATION),MO(2),          TT(2),          LCTL_T(KC_ESCAPE),
+                                                                                                    LALT_T(KC_APPLICATION),MO(2),          TT(2),          TD(TD_ESCAPE_QUIT),
                                                                                                                     KC_HOME,        KC_PGUP,
                                                                                     KC_SPACE,       KC_BSPACE,      KC_END,         KC_PGDOWN,      KC_TAB,         KC_ENTER
   ),
