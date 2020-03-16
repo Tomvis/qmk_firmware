@@ -37,6 +37,7 @@ enum custom_keycodes {
   SELECT_ALL_COPY,
   TD_SHIFT_CAPSLOCK = 0,
   TD_ESCAPE_QUIT,
+  // TD_SHIFT_CAPSLOCK_ONESHOT
 };
 
 
@@ -52,9 +53,21 @@ void dance_escape_quit (qk_tap_dance_state_t *state, void *user_data) {
 }
 
 
+// void dance_shift_capslock_oneshot (qk_tap_dance_state_t *state, void *user_data) {
+//   if (state->count == 1) {
+//     SEND_STRING(SS_TAP(X_RSHIFT));
+//     reset_tap_dance (state);
+//   }
+//   else if (state->count == 2) {
+
+//   }
+// }
+
+
 qk_tap_dance_action_t tap_dance_actions[] = {
 	[TD_SHIFT_CAPSLOCK] = ACTION_TAP_DANCE_DOUBLE(KC_LSHIFT, KC_CAPSLOCK),
-  [TD_ESCAPE_QUIT] = ACTION_TAP_DANCE_FN(dance_escape_quit)
+  [TD_ESCAPE_QUIT] = ACTION_TAP_DANCE_FN(dance_escape_quit),
+  // [TD_SHIFT_CAPSLOCK] = ACTION_TAP_DANCE_FN(dance_shift_capslock_oneshot)
 };
 
 
@@ -62,12 +75,12 @@ qk_tap_dance_action_t tap_dance_actions[] = {
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   [0] = LAYOUT_ergodox_pretty(
-    KC_EQUAL,       KC_1,           KC_2,           KC_3,           KC_4,           KC_5,           KC_LEFT,                                        KC_RIGHT,       KC_6,           KC_7,           KC_8,           KC_9,           KC_0,           KC_MINUS,
-    KC_TILD,        KC_Q,           KC_W,           KC_E,           KC_R,           KC_T,           KC_LCBR,                                        KC_RCBR,        KC_Y,           KC_U,           KC_I,           KC_O,           KC_P,           KC_BSLASH,
+    KC_EQUAL,       KC_1,           KC_2,           KC_3,           KC_4,           KC_5,           SELECT_ALL_COPY,                                        KC_RIGHT,       KC_6,           KC_7,           KC_8,           KC_9,           KC_0,           KC_MINUS,
+    KC_TILD,        KC_Q,           KC_W,           KC_E,           KC_R,           KC_T,           KC_LCBR,                                        PRN,        KC_Y,           KC_U,           KC_I,           KC_O,           KC_P,           KC_BSLASH,
     KC_DELETE,      KC_A,           KC_S,           KC_D,           KC_F,           KC_G,                                                                           KC_H,           KC_J,           KC_K,           KC_L,           KC_SCOLON,      LGUI_T(KC_QUOTE),
     TD(TD_SHIFT_CAPSLOCK),LCTL_T(KC_Z),   KC_X,           KC_C,           KC_V,           KC_B,           DYN_MACRO_PLAY1,                                KC_MEH,         KC_N,           KC_M,           KC_COMMA,       KC_DOT,         RCTL_T(KC_SLASH),KC_RSHIFT,
-    LT(1,KC_GRAVE), KC_LALT,        LALT(KC_LSHIFT),KC_LEFT,        KC_RIGHT,                                                                                                       KC_UP,          KC_DOWN,        KC_LBRACKET,    KC_RBRACKET,    MO(1),
-                                                                                                    LALT_T(KC_APPLICATION),MO(2),          TT(2),          TD(TD_ESCAPE_QUIT),
+    LT(1,KC_GRAVE), KC_LALT,        LALT(KC_LSHIFT),KC_LEFT,        KC_RIGHT,                                                                                                       KC_UP,          KC_DOWN,        BRACKET,    CBR,    MO(1),
+                                                                                                    KC_LALT,MO(2),          TT(2),          TD(TD_ESCAPE_QUIT),
                                                                                                                     KC_HOME,        KC_PGUP,
                                                                                     KC_SPACE,       KC_BSPACE,      KC_END,         KC_PGDOWN,      KC_TAB,         KC_ENTER
   ),
@@ -89,7 +102,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT,                                                                                                 KC_TRANSPARENT, KC_TRANSPARENT, KC_AUDIO_MUTE,  KC_TRANSPARENT, KC_TRANSPARENT,
                                                                                                     KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT,
                                                                                                                     KC_TRANSPARENT, KC_TRANSPARENT,
-                                                                                    KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, TD(TD_ESCAPE_QUIT)
+                                                                                    KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, PRN
 
   ),
 
