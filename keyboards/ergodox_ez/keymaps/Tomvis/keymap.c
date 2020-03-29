@@ -35,11 +35,21 @@ enum custom_keycodes {
   BRACKET,
   CBR,
   SELECT_ALL_COPY,
+  COPY,
+  PASTE,
+  EXIT,
   TD_SHIFT_CAPSLOCK = 0,
   TD_PRN_RPRN,
   TD_BRACKET_RBRACKET,
   TD_CBR_RCBR,
   TD_ESCAPE_QUIT,
+  TD_F_FIND,
+  TD_R_REPLACE,
+  TD_U_UNDO_REDO,
+  TD_C_COMMENT_TOGGLE,
+  TD_UP_RUN,
+  TD_J_EQUAL,
+  TD_K_UNDERSCORE,
   
   // TD_SHIFT_CAPSLOCK_ONESHOT
 };
@@ -89,6 +99,88 @@ void dance_cbr_rcbr (qk_tap_dance_state_t *state, void *user_data) {
 	}
 }
 
+void dance_f_find (qk_tap_dance_state_t *state, void *user_data) {
+  if (state->count == 1) {
+    SEND_STRING("f");
+    reset_tap_dance (state);
+  }
+  else if (state->count == 2) {
+    SEND_STRING(SS_LCTRL("f"));
+    reset_tap_dance (state);
+  }
+}
+
+void dance_r_replace (qk_tap_dance_state_t *state, void *user_data) {
+  if (state->count == 1) {
+    SEND_STRING("r");
+    reset_tap_dance (state);
+  }
+  else if (state->count == 2) {
+    SEND_STRING(SS_LCTRL("r"));
+    reset_tap_dance (state);
+  }
+}
+
+void dance_u_undo_redo (qk_tap_dance_state_t *state, void *user_data) {
+  if (state->count == 1) {
+    SEND_STRING("u");
+    reset_tap_dance (state);
+  }
+  else if (state->count == 2) {
+    SEND_STRING(SS_LCTRL("z"));
+    reset_tap_dance (state);
+  }
+  else if (state->count == 3) {
+    SEND_STRING(SS_LCTRL(SS_LSFT("z")));
+    reset_tap_dance (state);
+  }
+}
+
+
+void dance_c_comment_toggle (qk_tap_dance_state_t *state, void *user_data) {
+  if (state->count == 1) {
+    SEND_STRING("c");
+    reset_tap_dance (state);
+  }
+  else if (state->count == 2) {
+    SEND_STRING(SS_LCTRL("/"));
+    reset_tap_dance (state);
+  }
+}
+
+void dance_up_run (qk_tap_dance_state_t *state, void *user_data) {
+  if (state->count == 1) {
+    SEND_STRING(SS_TAP(X_UP));
+    reset_tap_dance (state);
+  }
+  else if (state->count == 2) {
+    SEND_STRING(SS_RSFT(SS_TAP(X_F10)));
+    reset_tap_dance (state);
+  }
+}
+
+void dance_j_equal (qk_tap_dance_state_t *state, void *user_data) {
+  if (state->count == 1) {
+    SEND_STRING("j");
+    reset_tap_dance (state);
+  }
+  else if (state->count == 2) {
+    SEND_STRING("=");
+    reset_tap_dance (state);
+  }
+}
+
+void dance_k_underscore (qk_tap_dance_state_t *state, void *user_data) {
+  if (state->count == 1) {
+    SEND_STRING("k");
+    reset_tap_dance (state);
+  }
+  else if (state->count == 2) {
+    SEND_STRING("_");
+    reset_tap_dance (state);
+  }
+}
+
 // void dance_shift_capslock_oneshot (qk_tap_dance_state_t *state, void *user_data) {
 //   if (state->count == 1) {
 //     SEND_STRING(SS_TAP(X_RSHIFT));
@@ -106,6 +198,14 @@ qk_tap_dance_action_t tap_dance_actions[] = {
   	[TD_PRN_RPRN] = ACTION_TAP_DANCE_FN(dance_prn_rprn),
   	[TD_BRACKET_RBRACKET] = ACTION_TAP_DANCE_FN(dance_bracket_rbracket),
   	[TD_CBR_RCBR] = ACTION_TAP_DANCE_FN(dance_cbr_rcbr),
+    [TD_F_FIND] = ACTION_TAP_DANCE_FN(dance_f_find),
+    [TD_R_REPLACE] = ACTION_TAP_DANCE_FN(dance_r_replace),
+    [TD_U_UNDO_REDO] = ACTION_TAP_DANCE_FN(dance_u_undo_redo),
+    [TD_C_COMMENT_TOGGLE] = ACTION_TAP_DANCE_FN(dance_c_comment_toggle),
+    [TD_UP_RUN] = ACTION_TAP_DANCE_FN(dance_up_run),
+    [TD_J_EQUAL] = ACTION_TAP_DANCE_FN(dance_j_equal),
+    [TD_K_UNDERSCORE] = ACTION_TAP_DANCE_FN(dance_k_underscore),
+
   // [TD_SHIFT_CAPSLOCK] = ACTION_TAP_DANCE_FN(dance_shift_capslock_oneshot)
 };
 
@@ -114,11 +214,11 @@ qk_tap_dance_action_t tap_dance_actions[] = {
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   [0] = LAYOUT_ergodox_pretty(
-    KC_EQUAL,       KC_1,           KC_2,           KC_3,           KC_4,           KC_5,           SELECT_ALL_COPY,                                        KC_RIGHT,       KC_6,           KC_7,           KC_8,           KC_9,           KC_0,           KC_MINUS,
-    KC_TILD,        KC_Q,           KC_W,           KC_E,           KC_R,           KC_T,           KC_LCBR,                                        TD(TD_PRN_RPRN),        KC_Y,           KC_U,           KC_I,           KC_O,           KC_P,           KC_BSLASH,
-    KC_DELETE,      KC_A,           KC_S,           KC_D,           KC_F,           KC_G,                                                                           KC_H,           KC_J,           KC_K,           KC_L,           KC_SCOLON,      LGUI_T(KC_QUOTE),
-    TD(TD_SHIFT_CAPSLOCK),LCTL_T(KC_Z),   KC_X,           KC_C,           KC_V,           KC_B,           DYN_MACRO_PLAY1,                                KC_MEH,         KC_N,           KC_M,           KC_COMMA,       KC_DOT,         RCTL_T(KC_SLASH),KC_RSHIFT,
-    LT(1,KC_GRAVE), KC_LALT,        LALT(KC_LSHIFT),KC_LEFT,        KC_RIGHT,                                                                                                       KC_UP,          KC_DOWN,        TD(TD_BRACKET_RBRACKET),    TD(TD_CBR_RCBR),    MO(1),
+    KC_EQUAL,       KC_1,           KC_2,           KC_3,           KC_4,           KC_5,           SELECT_ALL_COPY,                                        EXIT,       KC_6,           KC_7,           KC_8,           KC_9,           KC_0,           KC_MINUS,
+    KC_TILD,        KC_Q,           KC_W,           KC_E,           TD(TD_R_REPLACE),           KC_T,           KC_LCBR,                                        TD(TD_PRN_RPRN),        KC_Y,           TD(TD_U_UNDO_REDO),           KC_I,           KC_O,           KC_P,           KC_BSLASH,
+    KC_DELETE,      KC_A,           KC_S,           KC_D,           TD(TD_F_FIND),           KC_G,                                                                           KC_H,           TD(TD_J_EQUAL),           TD(TD_K_UNDERSCORE),           KC_L,           KC_SCOLON,      LGUI_T(KC_QUOTE),
+    TD(TD_SHIFT_CAPSLOCK),LCTL_T(KC_Z),   KC_X,           TD(TD_C_COMMENT_TOGGLE),           KC_V,           KC_B,           COPY,                                PASTE,         KC_N,           KC_M,           KC_COMMA,       KC_DOT,         RCTL_T(KC_SLASH),KC_RSHIFT,
+    LT(1,KC_GRAVE), KC_LALT,        LALT(KC_LSHIFT),KC_LEFT,        KC_RIGHT,                                                                                                       TD(TD_UP_RUN),          KC_DOWN,        TD(TD_BRACKET_RBRACKET),    TD(TD_CBR_RCBR),    MO(1),
                                                                                                     KC_LALT,MO(2),          TT(2),          TD(TD_ESCAPE_QUIT),
                                                                                                                     KC_HOME,        KC_PGUP,
                                                                                     KC_SPACE,       KC_BSPACE,      KC_END,         KC_PGDOWN,      KC_TAB,         KC_ENTER
@@ -207,6 +307,21 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
       if (record->event.pressed) {
         SEND_STRING(SS_LCTRL("ac"));
       }    
+      break;
+      case COPY:
+      if (record->event.pressed) {
+        SEND_STRING(SS_LCTRL("c"));
+      }
+      break;
+      case PASTE:
+      if (record->event.pressed) {
+        SEND_STRING(SS_LCTRL("v"));
+      }
+      break;
+      case EXIT:
+      if (record->event.pressed) {
+        SEND_STRING(SS_LCTRL("d"));
+      }
       break;
 }
   
